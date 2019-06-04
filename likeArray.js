@@ -48,20 +48,30 @@ foo(1)
 // 实参的长度为：1
 
 // 2.callee属性 ,Arguments 对象的 callee 属性，通过它可以调用函数自身。
-// 以下是经典闭包面试题使用callee的解决方法
+// 以下是经典闭包面试题使用callee的解决方法，非严格模式下
 
 var data=[]
 for(var i=0;i<3;i++){
     (data[i]=function(){
         console.log(arguments.callee.i) // 调用自身 
-    }).i=i
+    }).i=i   // 函数也是一种对象，我们可以通过这种方式给函数添加一个自定义的属性
+  //  上面这段代码相当于
+    //  data[i] = function () { console.log(arguments.callee.i)
+    //  data[i].i = i;
+    //  其实是 (...).i = i 给函数添加了 i 属性，然后通过 arguments.callee.i 获取了这个属性值,因为arguments.callee其实就代表了这个函数
 }
 
-data[0]()
-data[1]()
-data[2]()
+data[0]()  // 0
+data[1]()  // 1
+data[2]()  // 2
 
 // 我第一开始看到这个，什么，js还有这种写法么，不着急，我们慢慢来一句一句看
+// 我们先拆开这段代码来看
+// data[i] 其实就是个函数，data[o]()相当于执行这个函数
+// 即相当于 
+(function(){
+    console.log(arguments.callee.i) // 调用自身 
+})()
 // 解开迷雾之前，我们先看看arguments和函数绑定参数的关系
 function foo(name, age, sex, hobbit) {
 
