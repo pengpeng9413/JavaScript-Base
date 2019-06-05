@@ -107,8 +107,8 @@ function  child(name,age){
 }
 
  child.prototype=new Parent()  // 重写child 的原型指向Parent
- child.prototype.constructor=child  // 这个貌似本来就成立的，原型的构造函数指向这个构造函数本身，但是吧，感觉这两行代码可有可无
-
+ child.prototype.constructor=child  // 这个貌似本来就成立的，原型的构造函数指向这个构造函数本身，
+ //是对于需要用到construcor的场景，就会有问题。所以一般我们会加上这么一句：
 var  child1=new child('Kevin','18')  // 此时，对于
      child1.colors.push('black')
 
@@ -150,7 +150,7 @@ anotherPerson.sayHi();
 
 //  中间我们再来插入一下这个object.create()的模拟实现，有时我们也会称之为原型式继承
 //   
-//===========这里介绍一下 ES5 Object.create 的模拟实现，将传入的对象作为创建的对象的原型。
+//===========这里介绍一下 ES5 Object.create() 的模拟实现，将传入的对象作为创建的对象的原型。
 function objCreate(o){
     function f(){
 
@@ -162,3 +162,189 @@ function objCreate(o){
  * 5. 寄生组合继承，看名字就知道，寄生组合，肯定是兼具组合和寄生的特点，
  *    都说寄生组合是最佳的寄生方式，来看看有什么黑魔法，感受代码的魅力
  */
+// 说到寄生组合，我们再来重温一下组合继承的模式
+function  Parent(name){
+    this.name=name
+    this.colors=['red','blue','green']
+}
+
+function   child(name,age){
+    Parent.call(this,name)
+    this.age=age
+}
+child.prototype=new Parent()  //  这样就可以继承别的一些属性
+
+var  child1=new  child('kevin','18')
+console.log(child1)
+
+// 这里的缺点就是调用了两次构造函数 Parent
+// 如果我们不使用 Child.prototype = new Parent() ，而是间接的让 Child.prototype 访问到 Parent.prototype 呢？
+// 有木有是熟悉，对，就是bind的模拟实现，有这个剧情，我们来这里贴上bind的原生实现的代码
+Function.prototype.bind2=function(context){
+    // 这里我们要注意问你们要防止我们调用bind的是不是一个函数
+    if(typeof this !=='function'){
+        throw new Error('调用的不是一个函数')
+    }
+    var self=this
+    var args=Array.prototype.slice(arguments,1)
+    // 函数中转
+    var fNOP=function(){
+
+    }
+    var bindFunc=function(){
+        // 参数不定长，分布在多处的问题
+        var bindArgs=Array.prototype.slice(arguments,1)
+        // 构造函数的问题。new操作符，this指向失效问题
+        // 普通函数照旧
+        return self.apply(bindFunc instanceof this?this:context,args.concat(bindArgs))
+    }
+    // 解决new继承的问题，同时避免继承污染
+    fNOP.prototype=this.prototype
+    bindFoo.prototype=new fNOP()
+    // 返回一个新的函数
+    return  bindFoo
+}
+
+// 这里利用了一个空函数做中转，
+// 我们再来回过头来看组合寄生继承
+function Parent(name){
+    this.name=name
+    this.colors= ['red', 'blue', 'green'];
+}
+function   child(name,age){
+    Parent.call(this,name)
+    this.age=age
+}
+Parent.prototype.getName=function(){
+    console.log(this.name)
+}
+// 关键的一步
+function fNOP(){
+
+}
+fNOP.prototype=Parent.prototype
+child.prototype=new fNOP()    //  本质也是拿了一个函数作为中转，方便解耦，不至于修改了child.prototype的时候把Parent.prototype也修改了
+
+var child1=new child('kevin', '18');
+console.log(child1)
+// 最后我们封装一下这个继承的方法，寄生模式开始
+
+function  object(o){   //  其实这个函数做了一个中转，把中转的过程封装了起来
+    function F(){
+
+    }
+    F.prototype=o
+    return F
+}
+function prototype(child,parent){
+    var prototype=object(parent.prototype)
+    prototype.constructor=child
+    child.prototype=prototype
+}
+// 当我们使用的时候
+prototype(child,parent)  // 把继承的过程高度封装
+
+//======写完，我发现组合继承真是太精妙了，高手真的从来都是简短，高度抽象的，不像我现在写的代码
+//引用《javaScript高级程序设计》中对寄生组合继承的夸赞就是：
+// 这种方式的高效率体现它只调用了一次Parent构造函数，
+// 并且因此避免了在 Parent.prototype 上面创建不必要的、多余的属性。与此同时，原型链还能保持不变；
+// 因此，还能够正常使用 instanceof 和 isPrototypeOf。开发人员普遍认为寄生组合式继承是引用类型最理想的继承范式。
+// 因为它只涉及了两层，那多层的继承呢，
+// 多层的继承就是
+prototype(child1,child) 
+// 那如果要拓展自身的属性呢，怎么做呢，就直接在child() 这里需要继承的函数或对象
+function  child(){
+    this.name='xxp'
+}
+var child1=new child()
+    child1.age='18'
+
+    /**组合继承真香啊,鉴于本人水平有限，有说的不对的，望指正 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 自己想来重新梳理一下寄生组合继承,感觉这个寄生组合继承还不是很好理解
+    // 我们先放一篇文档链接： https://blog.csdn.net/u010582082/article/details/71616913
+    function create(o){  
+
+        var f=function(){
+
+        }
+        f.prototype=0
+        return f
+    }
+    function jicheng(child,parent){
+        //  拿到父类的原型
+        var F=create(parent.prototype)  // 这Object.reate() 替换掉。上面的这个函数就是这个的实现
+        // Object.create()方法对父类的原型进行浅复制，赋给子类原型：
+        F.constructor=child   // 增强对象    // 改变constructor指向  这两段水平不足，还不能完全理解
+        child.prototype=F     // 指定对象    父类原型赋给子类
+    }
+
+
+    // ====================== 再来回顾一下构造函数与实例的关系
+function F(){
+
+}
+var obj=new F()
+console.log(obj.constructor===F)  // obj的构造函数是F    输出是true
+
+
+    //  在掘金上看到一篇博文，这样理解起来就比较容易了
+    //  首先寄生我们就不说了，就是继承过程中疯转在一个函数罢了。
+    //  我们重点讲一下组合的概念
+    //  组合主要分成两步：
+    /**
+     * 1.构造函数属性继承
+     * 2.子类和父类原型的链接
+     */
+    我们来看这段代码
+
+    function Person(name){
+        this.name=name; //1
+        this.className="person" 
+       }
+       Person.prototype.getName=function(){
+        console.log(this.name)
+       }
+       function Man(name){  // 构造函数  属性继承
+         Person.apply(this,arguments)
+       }
+       //注意此处
+       Man.prototype = Object.create(Person.prototype);
+       var man1=new Man("Davin");
+       
+       
+    // 其实是我们对下面的这个函数理解的不够深  就是上文中的 Object.create()
+    // 这里用到了Object.creat(obj)方法，该方法会对传入的obj对象进行浅拷贝。
+    // 和上面组合继承的主要区别就是：将父类的原型复制给了子类原型。这种做法很清晰：
+    /** 
+     *  1.构造函数中继承父类属性／方法，并初始化父类。
+        2.子类原型和父类原型建立联系。
+    */
+
+    function create(o){
+        var f=function(){
+
+        }
+        f.prototype=0
+        return f
+    }
+
