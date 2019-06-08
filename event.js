@@ -64,14 +64,15 @@ bubbles   // 布尔值，用来表示该事件是否在DOM中冒泡。
 // 这些都是接下来我们一一要撕开的迷雾
 Events 可以使用 Event 构造函数创建如下：
 
-var event = new Event('build');
+var event = new Event('build');  //  这一步创建自定义事件
 
 // Listen for the event.
-elem.addEventListener('build', function (e) { ... }, false);
+elem.addEventListener('build', function (e) { ... }, false);  //  这一步监听事件 。但是这一步如果是自定义事件的话，他是不会执行的
 
 // Dispatch the event.
-elem.dispatchEvent(event);
+elem.dispatchEvent(event); //派发事件 代码中手动触发事件  这一步做分发，用代码控制  执行事件触发的回调
 
+自定义事件还有其他写法，但是已经被web标准给废弃了，读者可以查询mdn去查询相关的兼容写法
 
 
 
