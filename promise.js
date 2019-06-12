@@ -209,8 +209,8 @@ fetch(url)
 // 这段代码作为宏任务，进入主线程。
 // 先遇到setTimeout，那么将其回调函数注册后分发到宏任务Event Queue。(注册过程与上同，下文不再描述)
 // 接下来遇到了Promise，new Promise立即执行，then函数分发到微任务Event Queue。
-// 遇到console.log()，立即执行。
-// 好啦，整体代码script作为第一个宏任务执行结束，看看有哪些微任务？我们发现了then在微任务Event Queue里面，执行。
+// 遇到console.log()，立即执行，立即打印日志。此刻，整体代码script作为第一个宏任务执行结束
+// 然后看看有哪些微任务？我们发现了then在微任务Event Queue里面，执行。
 // ok，第一轮事件循环结束了，我们开始第二轮循环，当然要从宏任务Event Queue开始。我们发现了宏任务Event Queue中setTimeout对应的回调函数，立即执行。
 // 结束。
 
@@ -266,7 +266,92 @@ Promise.try(database.user.get({id:userid}))
 // 事实上，Promise.try是模拟了try代码块，就想promoise.catch模拟catch代码块一样,
 // 这样可以捕获所有同步和异步的错误
 
-/**    了解了基础的用法，我们再来重新认识一下 promise  */
+/**    了解了基础的用法(更详细的可以参考一下阮老师的 es6标准入门)，我们再来重新认识一下 promise  */
+
+
+
+
+
+
+/**promise A+ 规范   手写实现   面试经常考
+ * Promise/A+规范译文:
+ * https://malcolmyu.github.io/2015/06/12/Promises-A-Plus/#note-4
+ * Promise 是一个构造函数， new Promise 返回一个 promise对象 
+ * 需要传递一个executor执行器,执行器会立刻执行
+ * 接收一个excutor执行函数作为参数, excutor有两个函数类型形参resolve reject
+ * promise相当于一个状态机
+ * promise的三种状态
+    pending
+    fulfilled
+    rejected
+
+    (1) promise 对象初始化状态为 pending
+    (2) 当调用resolve(成功)，会由pending => fulfilled
+    (3) 当调用reject(失败)，会由pending => rejected
+ */
+  // promise的三种状态
+
+  const PENDING='pending'
+  const FULFILLED='fulfilled'
+  const REJECTED='rejected'
+
+  function Promise(excutor){
+    let that=this  // 缓存当前promise实例对象
+    that.status=PENDING  // 初始状态
+    that.value=undefined   // fulfilled状态时 返回的信息
+    that.reason=undefined  // rejected状态时，拒绝的原因
+    that.onFulfilledCallback=[]  // 存储fulfilled状态对应的onFulfilled函数
+    that.onRejectedCallback=[]   // 存储rejected状态时对应的onRejected函数
+
+    function resolve(value){  // value为fulFilled成功状态下的接受的值
+      if(value instanceof Promise){
+        return value.then( resolve,reject)
+      }
+
+
+      // 为什么resolve 加setTimeout?
+        //  2.2.4规范 onFulfilled 和 onRejected 只允许在 execution context 栈仅包含平台代码时运行.
+        // 注1 这里的平台代码指的是引擎、环境以及 promise 的实施代码。
+        // 实践中要确保 onFulfilled 和 onRejected 方法异步执行，且应该在 then 方法被调用的那一轮事件循环之后
+        // 的新执行栈中执行。
+
+        // 没错 知识总是关联的，我们又说到了事件循环，执行上下文栈，我们可以回到 209行，再来重温一下event loop到底是怎么回事
+        // 然后回过头来理解一下下面这段代码是怎么回事
+
+      setTimeout(()=>{
+          // 调用resolve回调对应的onFulfilled函数
+          if(that.status===PENDING){
+            // 只能由pending状态=>fulfilled (避免多次调用resolve reject)
+            that.status=FULFILLED  // 更改状态为成功
+            that.value=value
+            // forEach() 方法对数组的每个元素执行一次提供的函数。这里cb是回调函数，
+            // 多个回调函数作为onFulfilledCallback数组的元素  ，把that.value作为回调函数的参数传入
+            that.onFulfilledCallback.forEach(cb=>cb(that.value));   
+
+          }
+      })
+    }
+
+    function reject(reson){ // reject 状态失败的时候，reson为失败状态的拒因
+      //  调用reject 回调对应onRejected函数
+      setTimeout(()=>{
+        if(that===PENDING){
+          //  // 只能由pending状态 => rejected状态 (避免调用多次resolve reject)
+          that.status=REJECTED
+          that.reason=reson
+          that.onRejectedCallback.forEach(cb=>cb(that.reson))
+        }
+      })
+    }
+    
+    // 捕获在excutor中抛出的错误
+    try{
+      excutor(resolve,reject)
+    }catch(e){
+      reject(e)
+    }
+
+  }
 
 
 
