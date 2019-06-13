@@ -353,6 +353,14 @@ Promise.try(database.user.get({id:userid}))
 
   }
 
+  //  来，咱们接着写promise的原生实现，今天看了一下react的fiber  调度算法，发现真的好好玩啊，
+  //  嗯，前端真香，react真香
+
+  /**
+   * 对resolve 进行改进增强，针对 resolve 中不同情况进行处理
+   */
+
+
 
 
 
