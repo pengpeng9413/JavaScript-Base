@@ -355,11 +355,18 @@ Promise.try(database.user.get({id:userid}))
 
   //  来，咱们接着写promise的原生实现，今天看了一下react的fiber  调度算法，发现真的好好玩啊，
   //  嗯，前端真香，react真香
+  /**
+   * resole中的几种情况
+   * 1.普通值
+   * 2.promise对象
+   * 3.thenable 对象/函数
+   */
+
 
   /**
    * 对 resolve 进行改进增强，针对 resolve 中不同情况进行处理
    *  @param {promise} promise2 promise1.then方法返回的新的promise对象
-   *  
+   *  @param {[type]} x         promise1中的on
    */
   
 
