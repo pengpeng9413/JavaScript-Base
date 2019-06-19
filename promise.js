@@ -366,7 +366,9 @@ Promise.try(database.user.get({id:userid}))
   /**
    * 对 resolve 进行改进增强，针对 resolve 中不同情况进行处理
    *  @param {promise} promise2 promise1.then方法返回的新的promise对象
-   *  @param {[type]} x         promise1中的on
+   *  @param {[type]} x          promise1中onFulfilled的返回值
+   *  @param {[type]} resolve   promise2的resolve方法
+   *  @param {[type]} reject   promise2的reject方法
    */
   
 
