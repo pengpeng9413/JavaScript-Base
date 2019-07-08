@@ -24,21 +24,34 @@
       var container = document.getElementById("container");
 
       function getUserAction() {
-          console.info(this)   // 指向 <div id="container"></div>
+        // 指向 <div id="container"></div>  第一版
+        //  指向windows 第二版
+          console.info(this)   
         container.innerHTML = count++;
       }
       function debounce(func, wait) {
         var timeout;
-        debugger
-        console.info(this+'11')
+        console.info(this+'22') 
         return function() {
             console.info(this+'22')  // 指向  <div id="container"></div>
           clearTimeout(timeout);
           timeout = setTimeout(func, wait);
         };
       }
-      container.onmousemove = getUserAction; //  这个到底是函数调用呢还是方法调用呢，这个值得我们进一步深挖
-     // container.onmousemove = debounce(getUserAction, 1000);
+      //  这个到底是函数调用呢还是方法调用呢，这个值得我们进一步深挖
+      /**
+      *我们发现，当执行下面这个函数时候，也就是第一版的时候，getUserAction里面是指向  <div id="container"></div>
+      */
+        container.onmousemove = getUserAction; 
+      /**
+      *  当执行这个函数的时候，getUserAction里面是指向windows
+      */
+    container.onmousemove = debounce(getUserAction, 1000);
+      /**
+      另外我们需要声明的是，当我们的鼠标移动事件没有触发的时候，其实 debounce（）是会执行的
+      此时在34行 打印的this是windows
+      
+      */
     </script>
   </body>
 </html>
