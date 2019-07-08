@@ -130,3 +130,65 @@ var numbers = {
  numbers.sum(); // => 15  
 
  // 说到这里，我们来亲自验证一下，这里注释以及理论的正确性，得知此事要躬行，测试再test2.html上进行
+
+ // this的指向正确了，我们接着继续往下看
+ /**
+  * 1. event 对象
+  * 如果我们不使用debouce，那么以下会打印MouseEvent 对象，
+  * 但是在我们实现的 debounce 函数中，却只会打印 undefined!
+  */
+ function getUserAction(e) {
+    console.log(e);
+    container.innerHTML = count++;
+};
+// 所以我们需要修改一下代码
+function decounce(func,wait){
+    var timeout; // 定义一个定时器
+    return function(){
+        var context=this
+        var args=arguments
+        clearTimeout(timeout) // 清除定时器
+        timeout=setTimeout(function(){
+            func.bind(context,args)
+        },wait)
+    }
+}
+
+//===============到此为止，我们解决了两个问题   this 指向  ;   event 对象  , 以上的代码其实已经比较完善了
+// 现在有这么一个需求 ：我不希望非要等到事件停止触发后才执行，我希望立刻执行函数，然后等到停止触发 n 秒后，才可以重新触发执行。
+/**
+ * 我们接着来完善
+ */
+/**
+ * @desc 函数防抖
+ * @param func 函数
+ * @param wait 延迟执行毫秒数
+ * @param immediate true 表立即执行，false 表非立即执行
+ */
+// 第五版
+function debounce(func, wait, immediate) {
+
+    var timeout, result;
+
+    return function () {
+        var context = this;
+        var args = arguments;
+
+        if (timeout) clearTimeout(timeout);
+        if (immediate) {
+            // 如果已经执行过，不再执行
+            var callNow = !timeout;
+            timeout = setTimeout(function(){
+                timeout = null;
+            }, wait)
+            if (callNow) result = func.apply(context, args)
+        }
+        else {
+            timeout = setTimeout(function(){
+                func.apply(context, args)
+            }, wait);
+        }
+        return result;
+    }
+}
+// 是不是已经觉得很完善了，其实我们还是有继续优化的空间的，这个后续再来补充

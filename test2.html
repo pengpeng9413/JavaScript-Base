@@ -46,7 +46,7 @@
       /**
       *  当执行这个函数的时候，getUserAction里面是指向windows
       */
-    container.onmousemove = debounce(getUserAction, 1000);
+        container.onmousemove = debounce(getUserAction, 1000);
       /**
       另外我们需要声明的是，当我们的鼠标移动事件没有触发的时候，其实 debounce（）是会执行的
       此时在34行 打印的this是windows
