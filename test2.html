@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1" />
+    <title>debounce</title>
+    <style>
+      #container {
+        width: 100%;
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        color: #fff;
+        background-color: #444;
+        font-size: 30px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <script>
+      var count = 1;
+      var container = document.getElementById("container");
+
+      function getUserAction() {
+          console.info(this)   // 指向 <div id="container"></div>
+        container.innerHTML = count++;
+      }
+      function debounce(func, wait) {
+        var timeout;
+        debugger
+        console.info(this+'11')
+        return function() {
+            console.info(this+'22')  // 指向  <div id="container"></div>
+          clearTimeout(timeout);
+          timeout = setTimeout(func, wait);
+        };
+      }
+      container.onmousemove = getUserAction; //  这个到底是函数调用呢还是方法调用呢，这个值得我们进一步深挖
+     // container.onmousemove = debounce(getUserAction, 1000);
+    </script>
+  </body>
+</html>
