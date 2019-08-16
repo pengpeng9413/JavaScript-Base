@@ -82,6 +82,17 @@ step()  // 启动，开始执行
  *   数据层级 (具体里面的状态，数值：如温度，是否停机等)  
  */
 
+function a(){
+    var i=true
+    // if(i){
+    //     console.log("b:"+b)
+    //     let b=2
+    // }
+    console.log("c:"+c)
+    var c=1
+    console.log("c+i:"+(c+i))
+}
 
+a()   // b:undefined ; c:1 ;"c+i":2
 
 
