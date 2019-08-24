@@ -73,26 +73,7 @@ step()  // 启动，开始执行
 // 这样回过头来看，这个答案还涉及了很多promise的知识点
 
 
-/**  ganwei 记录 数据配置表 */
-/** 系统层级 (空调，制冷，制热) 在web上可以自定义配置     table:systermTable
- *     系统下耳机配置    （如空调系统，1栋；2栋；3栋）    table:systermTable    
- *          第三级
- *              第四级      (这里可以设置多级)
- *   svg 图层级    table:svgtable              svgtable和systermTable 进行关联，  最小层级行数据关联
- *   数据层级 (具体里面的状态，数值：如温度，是否停机等)  
- */
 
-function a(){
-    var i=true
-    // if(i){
-    //     console.log("b:"+b)
-    //     let b=2
-    // }
-    console.log("c:"+c)
-    var c=1
-    console.log("c+i:"+(c+i))
-}
 
-a()   // b:undefined ; c:1 ;"c+i":2
 
 
