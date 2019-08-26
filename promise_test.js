@@ -9,9 +9,23 @@
 
  let urlArr=[p1,p2,p3,p4,p5]
  /* 1. 常规解法：数组递归 */ 
- function twoPromise(urlArr){
 
+ // 在开始之前，我们先实现一个最简单的一个异步请求顺序执行如： 【p1,p2,p3】,条件：p1执行完之后执行p2,p2执行完之后，执行p3
+ // 而且不用管各个异步之间的关联，假设这个urlArr数组里面的异步都是没有关系的（不需要管是否需要拿之前的response作为接下来异步的请求）
+ function twoPromise(urlArr){
+    let p = Promise.resolve() // 预先定义一个resoved状态的Promise对象
+    for(let i=0;i<urlArr.length;i++){
+        p.then(urlArr[i])
+    }
  }
+ // 以上代码我们可以用reduce做简单的优化
+ function twoPromise(urlArr){  //  后续待检验
+    urlArr.reduce((p,ascy)=>{
+        return p.then(ascy)
+    },promise.resolve())
+ }
+ 
+ //
  /* 巧用promise.race() */
  function twoPromise(urlArr){
 
