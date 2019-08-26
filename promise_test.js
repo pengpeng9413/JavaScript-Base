@@ -20,10 +20,20 @@
  }
  // 以上代码我们可以用reduce做简单的优化
  function twoPromise(urlArr){  //  后续待检验
-    urlArr.reduce((p,ascy)=>{
-        return p.then(ascy)
-    },promise.resolve())
+    // 很久没有用reduce了，我们再来回顾一下，reduce()的用法，
+    // reduce(callback(),initValue) ;reduce()函数接收两个参数：
+    // first: 一个回调函数callback(prev,curr);其中prev为累加器（姑且也可以认为为初始值），currr为当前值
+    // second: 一个初始值initValue
+    urlArr.reduce((prev,currt)=>{ 
+        return prev.then(currt)
+    },promise.resolve())  // promise.resolve为初始值，也是函数中prev的初始值
  }
+
+ /**
+  * @see 以上的是多个并发请求没有关联，如果是多个并发请求【p1,p2,p3】他们之间是拿到前一个请求的response作为参数然后做异步请求呢
+  * @param {*} urlArr 
+  * @todo 明天再写了
+  */
  
  //
  /* 巧用promise.race() */
