@@ -90,7 +90,7 @@ var name='jack'
 function change(){
     console.log(name)
     var name='licy'
-    console.log(name)
+    //console.log(name)
 }
 change()
 
