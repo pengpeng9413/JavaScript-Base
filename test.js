@@ -73,6 +73,28 @@ step()  // 启动，开始执行
 // 这样回过头来看，这个答案还涉及了很多promise的知识点
 
 
+// ====面试题===考试js事件循环机制
+for(var i=1;i<=3;i++){
+    setTimeout(function(){
+        console.log(i)
+    },0)
+}
+// ===========考察js的解析机制，从右往左，
+(function(){
+    var a=b=5
+})()
+console.log(b)
+console.log(a)
+// ============考察js是如何执行的，涉及词法作用域==========
+var name='jack'
+function change(){
+    console.log(name)
+    var name='licy'
+    console.log(name)
+}
+change()
+
+
 
 
 
