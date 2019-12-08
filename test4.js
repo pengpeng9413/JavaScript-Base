@@ -40,5 +40,43 @@ function f(thunk){
     return thunk()*2
 }
 
+// 接下来我们来讲讲非常经典的co模块
+/**
+ * @alias thunk函数可以实现generator的函数自执行，我们来看看co是怎么来实现
+ */
 
-// 问题1:假如小程序只支持6个并发，如何封装一个函数，让它免于这个限制？  ---》  石头科技之问？
+function co(gen){  // v1.0返回一个promise
+    var ctx=this
+    return new Promise(function(resolve,reject){})
+}
+function co(gen){
+    var ctx=this
+    return new Promise(function(resolve,reject){})
+}
+
+// 我们一般写并发请求的时候是这样写的
+let [foo,bar]=await Promise.all(getFoo(),getBar())
+
+// 问题1:假如小程序只支持6个并发，如何封装一个函数，让它免于这个限制？  ---》  石头科技面试题？
+
+/**
+ * 
+ * @param {*} urls 
+ * @name 在es6入门这本书中，有一下这个例子，如何来解释这里的是并发请求？
+ */
+// 问题：如何并发请求，同时依前后顺序输出结果
+async function loginOrder(urls){
+    // 并发远程读取  url，这里有个很容易出错的问题，很有意思，灵魂之问：这里为啥是同步并发？
+    // 贴一个链接：https://segmentfault.com/a/1190000020809964?utm_source=tag-newest    --》  async函数在map forEach 的应用
+
+    const textPromises = urls.map(async url=>{
+        const response = await fetch(url)
+        return response.text()
+    })
+    // 按次序输出
+    for(const textPromise of textPromises){
+        console.log(await textPromise)
+    }
+}
+
+
