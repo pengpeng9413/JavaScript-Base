@@ -1,79 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-</head>
-<style>
+  </head>
+  <style>
     .home {
-        display: flex;
-        flex: 1 1 auto;
+      display: flex;
+      flex: 1 1 auto;
     }
 
     .all {
-        width: 100%;
-        height: 100vh;
-        background-color: cadetblue;
+      width: 100%;
+      height: 100vh;
+      background-color: cadetblue;
     }
 
     .left {
-        width: 50%;
+      width: 50%;
+      background-image: url('./img/bg2.jpg');
     }
 
     .middleLine {
-        width: 1px;
-        background-color: black;
-        margin: 0 -5px;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        cursor: col-resize;
+      width: 1px;
+      background-color: black;
+      margin: 0 -5px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      cursor: col-resize;
     }
 
     .middleLine:hover {
-        border-left: 5px solid rgba(0, 0, 0, .5);
-        border-right: 5px solid rgba(0, 0, 0, .5);
+      border-left: 5px solid rgba(0, 0, 0, 0.5);
+      border-right: 5px solid rgba(0, 0, 0, 0.5);
     }
 
     .right {
-        width: 50%;
-        background-color: darkviolet
+      width: 50%;
+      /* background-color: darkviolet; */
+      background-image: url('./img/bg1.jpg');
     }
-</style>
+  </style>
 
-<body>
-    <div id='page' class="home">
-        <button id="btn" class="split">分屏</button>
-        <div id='old' class="all"></div>
+  <body>
+    <div id="page" class="home">
+      <button id="btn" class="split">分屏</button>
+      <div id="old" class="all"></div>
     </div>
-</body>
-<script>
-
+  </body>
+  <script>
     const BTN = document.getElementById('btn');
+    const Box = document.getElementById('page');
     // 监听click事件
     BTN.addEventListener('click', () => {
-        console.info(1122)
-        // 使之分成两屏
-        // 1. 创建两个节点，一个分屏窗口，一个分割线
-        let oldDiv = document.getElementById('old')
-        let newDiv = document.createElement('div')
-        let splitSpan = document.createElement('span')
-        oldDiv.className += ' left'
-        newDiv.id = 'newDivNode'
-        splitSpan.id = 'split'
-        newDiv.className = 'right'
-        splitSpan.className = 'middleLine'  // 作为中间的分割线
-        // 2. 获取到父节点,插入新的节点元素
-        let parentDiv = document.getElementById('page')
-        parentDiv.append(newDiv)
-        parentDiv.insertBefore(splitSpan, newDiv)
-        // 3. 可以改变窗口宽度
+      console.info(1122);
+      // 使之分成两屏
+      // 1. 创建两个节点，一个分屏窗口，一个分割线
+      let oldDiv = document.getElementById('old');
+      let newDiv = document.createElement('div');
+      let splitSpan = document.createElement('span');
+      oldDiv.className += ' left';
+      newDiv.id = 'newDivNode';
+      splitSpan.id = 'split';
+      newDiv.className = 'right';
+      splitSpan.className = 'middleLine'; // 作为中间的分割线
+      // 2. 获取到父节点,插入新的节点元素
+      let parentDiv = document.getElementById('page');
+      parentDiv.append(newDiv);
+      parentDiv.insertBefore(splitSpan, newDiv);
+      // 3. 可以改变窗口宽度
+      splitSpan.onmousedown = function(e) {
+        // 当鼠标按下
+        var startX = e.clientX; // 距离body可视区域的横纵坐标
+        splitSpan.left = splitSpan.offsetLeft; // 距离父元素的横纵坐标
+        // 鼠标移动事件
+        document.onmousemove = function(e) {
+          console.info(e);
+          // 奇怪？为啥是document呢，而不是splitSpan呢,因为为了防止丢帧，而且同一事件的鼠标事件，以及属性值是唯一的，综上所述我们选择绑在document上面
+          var endX = e.clientX;
+          var moveLen = splitSpan.left + (endX - startX);
 
-    })
-
-
-</script>
-
+          splitSpan.style.left = moveLen;
+          oldDiv.style.width = moveLen + 'px';
+          newDiv.style.width = Box.clientWidth - moveLen - 1 + 'px';
+        };
+        // 鼠标松开事件
+        document.onmouseup = function() {
+          // 释放鼠标事件
+          document.onmousemove = null;
+          document.onmouseup = null;
+          splitSpan.releaseCapture && splitSpan.releaseCapture();
+        };
+        splitSpan.setCapture && splitSpan.setCapture();
+        return false;
+      };
+    });
+  </script>
 </html>
