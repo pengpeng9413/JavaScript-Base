@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实现一个气泡弹窗</title>
+  </head>
+  <style>
+    .warp {
+      min-width: 160px;
+      max-width: 360px;
+      display: inline-block;
+      height: 36px;
+      border: 2px solid #29bfff;
+      position: relative;
+      border-radius: 10px 10px 10px 0;
+      background-color: rgba(2, 10, 26, 0.85);
+      color: white;
+      line-height: 36px;
+    }
+    .warp::before {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-color: transparent #29bfff; /*上下颜色 左右颜色*/
+      border-width: 0 0 20px 25px;
+      border-style: solid;
+      top: 35px;
+      left: -2px;
+    }
+    .warp::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-color: transparent rgba(2, 10, 26, 0.85); /*white是弹框背景色*/
+      border-width: 0 0 15px 20px;
+      border-style: solid;
+      top: 35px;
+      left: 0px;
+    }
+    .div1 {
+      width: 50px;
+      height: 50px;
+      border: 50px solid;
+      border-color: yellow skyblue pink deeppink;
+    }
+    .div2 {
+      width: 0;
+      height: 0;
+      border-color: transparent red; /*上下颜色 左右颜色*/
+      border-width: 0 0 50px 50px;
+      border-style: solid;
+    }
+    .div2::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-color: transparent yellow; /*上下颜色 左右颜色*/
+      border-width: 0 0 40px 40px;
+      border-style: solid;
+    }
+  </style>
+  <body>
+    <div class="warp">
+      梁子湖高尔夫俱乐部
+    </div>
+
+    <!-- <p>1.下面是一个div.长宽为50*50的正方形，边框宽度为50</p>
+    <div class="div1"></div>
+    <div class="div2"></div> -->
+  </body>
+</html>

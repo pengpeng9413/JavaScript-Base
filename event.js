@@ -8,9 +8,9 @@ Event 对象代表事件的状态，比如事件在其中发生的元素、键�
 1. 冒泡
 2. 捕获
 
-说到冒泡和捕获呢，我想肯定就会想到事件代理，这一节只是在我的语雀文档（js事件代理详解）会有更加详细的解释
+// 说到冒泡和捕获呢，我想肯定就会想到事件代理，这一节只是在我的语雀文档（js事件代理详解）会有更加详细的解释
 
-这里我们重点说自定义事件，回归到起点，js事件
+// 这里我们重点说自定义事件，回归到起点，js事件
 /**1.基本用法 */
 target.addEventListener(type, listener[, useCapture]);
 target.addEventListener(type, listener[, options]);
