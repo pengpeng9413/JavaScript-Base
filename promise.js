@@ -3,7 +3,7 @@
  * @Author: your name
  * @LastEditors: Please set LastEditors
  * @Date: 2019-04-30 09:23:16
- * @LastEditTime: 2019-05-08 13:47:23
+ * @LastEditTime: 2020-11-06 17:40:19
  */
 class MyClassroom {
     constructor(number) {
@@ -376,3 +376,31 @@ Promise.try(database.user.get({id:userid}))
 
 
 
+// 今天我在github上看到一个题目是说promise.all()的实现原理，一开始我想这不是原声就提供的么，
+// 如果要说实现原理的话，就是自己实现一遍呗，来手敲一遍
+Promise.prototype.all=function(arrayLikePromise){
+  // 参数传入数组，数组里面是promise
+  if(Array.isArray(arrayLikePromise)){
+    console.error('传入参数需要是个数组')
+    return 
+  }
+  // 返回值集合
+  let result=[]
+  let count=0
+  for(let[i,p] of arrayLikePromise.entries()){
+    
+  }
+  // arrayLikePromise.map((item)=>{
+  //   item().then((res)=>{
+  //     reslove(res)
+  //   },()=>{
+  //     reject(res)
+  //   })
+  // })
+}
+
+
+// 今天发现一个新大陆，原来还有for of 的用法
+// 那么和我们常用的方法  for in 有啥区别呢
+// for in 遍历数据索引
+// for of 遍历数组元素本身
