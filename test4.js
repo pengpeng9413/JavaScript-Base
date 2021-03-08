@@ -1,3 +1,7 @@
+/*
+ * @Description: 
+ * @Author: xiexiupeng
+ */
 /**
  * @alias 今天面试官问了这么一个问题，就是我们日常的表格的排序问题
  */
@@ -10,6 +14,7 @@ var arr = [
 ];
 
 // 进行排序，比如table的数据过滤，主要考察sort 函数
+// 详细用法见 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
 
 // 生成器函数   如何来理解生成器函数这几句话呢
 function* funn1(x) {
@@ -61,7 +66,7 @@ function co(gen) {
 }
 
 // 我们一般写并发请求的时候是这样写的
-let [foo, bar] = await Promise.all(getFoo(), getBar());
+let [foo, bar] = await Promise.all([getFoo(), getBar()]);
 
 // 问题1:假如小程序只支持6个并发，如何封装一个函数，让它免于这个限制？  ---》  石头科技面试题？
 
