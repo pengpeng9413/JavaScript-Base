@@ -142,3 +142,180 @@ pubSub.publish("handleChange1",new Date())
 // 取消订阅
 handle1.unsubscribe()
 
+
+// ==== 还记得一个非常经典的迷你库么 mitter ====
+// 这里我们来实现一个类似这样的功能
+class Events {
+  constructor() {
+    this.events = new Map();
+  }
+  // 注册事件
+  addEvent(key, fn, isOnce, ...args) {
+    const value = this.events.has(key) ? this.events.has(key) : this.events.set(key, new Map()).get(key) // 里面又嵌套一层map,骚气
+    value.set(fn, (...args1) => { // fn 作为key，骚气啊
+        fn(...args, ...args1)
+        isOnce && this.off(key, fn)
+    })
+  }
+
+  on(key, fn, ...args) {
+    if (!fn) {
+      console.error(`没有传入回调函数`);
+      return
+    }
+    this.addEvent(key, fn, false, ...args)
+  }
+
+  emit(key, ...args) {
+    if (!this.events.has(key)) {
+      console.warn(`没有 ${key} 事件`);
+      return;
+    }
+    for (let [key, cbFn] of this.events.get(key).entries()) {
+      cbFn(...args);
+    }
+  }
+
+  off(key, fn) {
+    if (this.events.get(key)) {
+      this.events.get(key).delete(fn); // 这样做到了函数相等，巧妙的利用了Map 的key 值
+    }
+  }
+
+  once(key, fn, ...args) {
+    this.addEvent(key, fn, true, ...args)
+  }
+}
+// 请使用原生代码实现一个Events模块，可以实现自定义事件的订阅、触发、移除功能
+const fn1 = (... args)=>console.log('I want sleep1', ... args)
+const fn2 = (... args)=>console.log('I want sleep2', ... args)
+const event = new Events();
+event.on('sleep', fn1, 1, 2, 3);
+event.on('sleep', fn2, 1, 2, 3);
+event.fire('sleep', 4, 5, 6);
+// I want sleep1 1 2 3 4 5 6
+// I want sleep2 1 2 3 4 5 6
+event.off('sleep', fn1);
+event.once('sleep', () => console.log('I want sleep'));
+event.fire('sleep');
+// I want sleep2 1 2 3
+// I want sleep
+event.fire('sleep');
+// I want sleep2 1 2 3
+
+
+// class mitt{
+//     constructor(){
+//       this.maps=new Map()
+//     }
+
+//     // 注册事件
+//     on(type,handler,...args){
+//       if(this.maps.has(type)){// 一个type可以注册不同事件
+//         this.map.set(type,[{cb:handler}])
+//         return
+//       }
+//       this.map.get(type).push({cb:handler})
+//     }
+
+//     // 触发事件
+//     emit(type,...args){
+//       if(this.maps.has(type)){
+//         throw new Error(`${type} 事件没有注册`)
+//       }
+//       this.maps.get("type").forEach(element => {
+//         if(element.hasOwnProperty("cb")){
+//           element.cb(...args);
+//         }else{
+//           element.once(...args)
+//           this.off(type,element.once)
+//         }
+        
+//       });
+//     }
+
+//     // 取消事件
+//     off(type,handler){
+//       this.maps.entries((key,value)=>{
+//         if(type===key){
+//           value.forEach((item,index)=>{
+//            if(handler===item){
+//              value.splice(index,1)
+//            }
+//           })
+//         }
+//       })
+//     }
+
+//     // 只触发一次，注意这里只是注册不触发
+//     once(type,handler){
+//       this.maps.forEach((item,index)=>{ // 如何保证只执行一次，执行完销毁掉这个==》难点
+//         if(item.type===type){
+//           this.maps.get(type).push({once:handler})
+//         }
+//       })
+//     }
+    
+// }
+
+
+/** 尽量写es6 版本的答案吧 */
+
+function mitt(){ 
+  return{
+    maps:new Object(),
+    on:function (type,handler,...args){  // 如何缓存参数,利用bind
+      if(this.maps.hasOwnProperty(type)){
+        this.maps[type].push({cb:handler.bind(this,...args)})
+        return
+      }
+      this.maps[type]=[{cb:handler.bind(this,...args)}];
+    },
+    emit:function(type,...args){
+      if(!this.maps.hasOwnProperty(type)){
+        throw new Error(`${type} 事件没有注册`)
+      }
+      this.maps[type].forEach(element => {
+        if(element.hasOwnProperty("cb")){
+          element.cb(...args);
+        }else if(element.hasOwnProperty("once")){
+          element.once(...args)
+          this.off(type,element.once)
+        }
+      });
+    },
+    off:function(type,handler){
+      if(!this.maps.hasOwnProperty(type)){
+        throw new Error("不存在该事件")
+      }
+      this.maps[type].forEach((item,index)=>{ // 函数相当怎么区别
+        // 这样永远不相等，因为饮用地址不同
+        if(item.cb===handler){
+          this.maps[type].splice(index,1)
+        }
+      })
+    },
+    once:function(type,handler){
+     this.maps[type].push({once:handler})
+    }
+  }
+}
+
+const events=new mitt();
+
+const fn1 = (... args)=>console.log('I want sleep1', ... args)
+const fn2 = (... args)=>console.log('I want sleep2', ... args)
+// const event = new Events();
+events.on('sleep', fn1, 1, 2, 3);
+events.on('sleep', fn2, 1, 2, 3);
+events.emit('sleep', 4, 5, 6);
+// I want sleep1 1 2 3 4 5 6
+// I want sleep2 1 2 3 4 5 6
+events.off('sleep', fn1);
+events.once('sleep', () => console.log('I want sleep'));
+events.emit('sleep');
+// I want sleep2 1 2 3
+// I want sleep
+events.emit('sleep');
+// I want sleep2 1 2 3
+

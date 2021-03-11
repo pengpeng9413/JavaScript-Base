@@ -81,4 +81,3 @@ elem.dispatchEvent(event); //派发事件 代码中手动触发事件  这一步
 
 
 
-
